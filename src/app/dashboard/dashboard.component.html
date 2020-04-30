@@ -10,7 +10,8 @@
       <p>
         <mat-form-field>
           <mat-label>Select your currency</mat-label>
-          <mat-select formControlName="option" required (selectionChange)="convertAmount()" [(value)]="convertOptions[0]">
+          <mat-select formControlName="option" required (selectionChange)="convertAmount()"
+                      [(value)]="convertOptions[0]">
             <mat-option>--</mat-option>
             <mat-option *ngFor="let convertOption of convertOptions" [value]="convertOption">
               {{convertOption.description}}
@@ -26,3 +27,6 @@
     </form>
   </mat-card-content>
 </mat-card>
+
+
+<div id="chartContainer" [style.display]="convertModel?.exchangeRates ? 'block' : 'none'"></div>

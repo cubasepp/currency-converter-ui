@@ -4,6 +4,7 @@ import {ConvertOptions} from '../interface/convert-options';
 import {ConvertService} from '../services/convert.service';
 import {ConvertModel} from '../model/convert.model';
 import {debounceTime} from 'rxjs/operators';
+import * as CanvasJS from '../../assets/canvasjs.min';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,15 +32,22 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
   }
 
   convertAmount() {
+    const dataPoints = [];
     this.convertService.convertAmout(
       this.exchangeForm.get('amount').value,
       this.exchangeForm.get('option').value.from_currency,
       this.exchangeForm.get('option').value.to_currency)
       .subscribe(data => {
         this.convertModel = data;
+
+        this.convertModel.exchangeRates.map(x => {
+          dataPoints.push({y: x.rate, label: x.date.toLocaleString()});
+        });
+        this.renderChart(dataPoints);
       });
   }
 
@@ -49,6 +57,19 @@ export class DashboardComponent implements OnInit {
       .subscribe(() => {
         this.convertAmount();
       });
+  }
+
+  private renderChart(dataPoints) {
+    const chart = new CanvasJS.Chart('chartContainer', {
+      theme: 'light2',
+      animationEnabled: true,
+      exportEnabled: false,
+      data: [{
+        type: 'spline',
+        dataPoints
+      }]
+    });
+    chart.render();
   }
 
 }
