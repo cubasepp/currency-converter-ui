@@ -25,8 +25,8 @@ export class DashboardComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private convertService: ConvertService) {
     this.exchangeForm = this.formBuilder.group({
-      amount: ['0', Validators.required],
-      option: [this.convertOptions.find(e => !!e), Validators.required]
+      amount: ['1', Validators.required],
+      option: [null, Validators.required]
     });
     this.onChangeAmount();
   }
@@ -41,10 +41,9 @@ export class DashboardComponent implements OnInit {
       this.exchangeForm.get('amount').value * 100, // convert euro in cents
       this.exchangeForm.get('option').value.from_currency,
       this.exchangeForm.get('option').value.to_currency)
-      .subscribe(data => {
+      .subscribe((data: ConvertModel) => {
         this.convertModel = data;
-
-        this.convertModel.exchangeRates.map(x => {
+        this.convertModel.exchangeRates.forEach(x => {
           dataPoints.push({y: x.rate, label: x.date.toLocaleString()});
         });
         this.renderChart(dataPoints);
@@ -55,7 +54,9 @@ export class DashboardComponent implements OnInit {
     this.exchangeForm.get('amount').valueChanges
       .pipe(debounceTime(400))
       .subscribe(() => {
-        this.convertAmount();
+        if (this.exchangeForm.get('option').value !== null) {
+          this.convertAmount();
+        }
       });
   }
 
