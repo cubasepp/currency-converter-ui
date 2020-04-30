@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
   convertAmount() {
     const dataPoints = [];
     this.convertService.convertAmout(
-      this.exchangeForm.get('amount').value,
+      this.exchangeForm.get('amount').value * 100, // convert euro in cents
       this.exchangeForm.get('option').value.from_currency,
       this.exchangeForm.get('option').value.to_currency)
       .subscribe(data => {
