@@ -8,7 +8,7 @@ import {ExchangeRateModel} from '../model/exchange-rate.model';
 @Injectable({
   providedIn: 'root'
 })
-export class ConvertService {
+export class ApiService {
 
   constructor(private httpClient: HttpClient) {
   }
@@ -19,13 +19,16 @@ export class ConvertService {
       .set('from_currency', fromCurrency)
       .set('to_currency', toCurrency);
 
-    return this.httpClient.get<ConvertModel>(`${environment.apiUrl}/convert.json`, {params})
+    return this.httpClient.get<ConvertModel>(`${environment.apiUrl}/api/convert.json`, {params})
       .pipe(map((data: any) =>
         new ConvertModel(
           data.converted_amount,
           data.exchange_rates.map(res => new ExchangeRateModel(res.rate, res.date))
         )
       ));
+  }
 
+  getExchangeRates() {
+    return this.httpClient.get(`${environment.apiUrl}/api/exchange_rates.json`);
   }
 }

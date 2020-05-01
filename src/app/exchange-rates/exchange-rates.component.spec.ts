@@ -1,26 +1,26 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {DashboardComponent} from './dashboard.component';
+import {ExchangeRatesComponent} from './exchange-rates.component';
 import {ApiService} from '../services/api.service';
 import {MaterialModule} from '../shared/material/material.module';
 import {ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-describe('DashboardComponent', () => {
-  let component: DashboardComponent;
-  let fixture: ComponentFixture<DashboardComponent>;
+describe('ExchangeRatesComponent', () => {
+  let component: ExchangeRatesComponent;
+  let fixture: ComponentFixture<ExchangeRatesComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [DashboardComponent],
-      imports: [MaterialModule, ReactiveFormsModule, HttpClientModule, BrowserAnimationsModule],
+      declarations: [ExchangeRatesComponent],
+      imports: [HttpClientModule],
       providers: [ApiService]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DashboardComponent);
+    fixture = TestBed.createComponent(ExchangeRatesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

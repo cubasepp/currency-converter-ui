@@ -1,7 +1,7 @@
 const PROXY_CONFIG = [
   {
     context: [
-      "/convert"
+      "/api"
     ],
     target: "http://localhost:3000",
     secure: false

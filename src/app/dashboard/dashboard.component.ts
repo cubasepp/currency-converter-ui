@@ -1,10 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ConvertOptions} from '../interface/convert-options';
-import {ConvertService} from '../services/convert.service';
+import {ApiService} from '../services/api.service';
 import {ConvertModel} from '../model/convert.model';
 import {debounceTime} from 'rxjs/operators';
-import * as CanvasJS from '../../assets/canvasjs.min';
+import {ChartDataSets} from 'chart.js';
+import {Color, Label} from 'ng2-charts';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +17,26 @@ export class DashboardComponent implements OnInit {
   exchangeForm: FormGroup;
   convertModel: ConvertModel;
 
+  // Chart configuration
+  chartReady = false;
+  lineChartData: ChartDataSets[] = [];
+  lineChartLabels: Label[] = [];
+
+  lineChartOptions = {
+    responsive: true,
+  };
+
+  lineChartColors: Color[] = [
+    {
+      borderColor: 'black',
+      backgroundColor: 'rgba(255,255,0,0.28)',
+    }
+  ];
+
+  lineChartLegend = true;
+  lineChartType = 'line';
+  // End chart configuration
+
   convertOptions: ConvertOptions[] = [
     {description: 'EUR -> USD', from_currency: 'EUR', to_currency: 'USD'},
     {description: 'USD -> EUR', from_currency: 'USD', to_currency: 'EUR'},
@@ -23,7 +45,7 @@ export class DashboardComponent implements OnInit {
   ];
 
   constructor(private formBuilder: FormBuilder,
-              private convertService: ConvertService) {
+              private apiService: ApiService) {
     this.exchangeForm = this.formBuilder.group({
       amount: ['1', Validators.required],
       option: [null, Validators.required]
@@ -36,17 +58,17 @@ export class DashboardComponent implements OnInit {
   }
 
   convertAmount() {
-    const dataPoints = [];
-    this.convertService.convertAmout(
+    this.chartReady = false;
+    this.lineChartData = [];
+    this.apiService.convertAmout(
       this.exchangeForm.get('amount').value * 100, // convert euro in cents
       this.exchangeForm.get('option').value.from_currency,
       this.exchangeForm.get('option').value.to_currency)
       .subscribe((data: ConvertModel) => {
         this.convertModel = data;
-        this.convertModel.exchangeRates.forEach(x => {
-          dataPoints.push({y: x.rate, label: x.date.toLocaleString()});
-        });
-        this.renderChart(dataPoints);
+        this.lineChartLabels = data.exchangeRates.map(x => new Date(x.date).toLocaleDateString());
+        this.lineChartData.push({data: data.exchangeRates.map(x => x.rate), label: ''});
+        this.chartReady = true;
       });
   }
 
@@ -59,18 +81,4 @@ export class DashboardComponent implements OnInit {
         }
       });
   }
-
-  private renderChart(dataPoints) {
-    const chart = new CanvasJS.Chart('chartContainer', {
-      theme: 'light2',
-      animationEnabled: true,
-      exportEnabled: false,
-      data: [{
-        type: 'spline',
-        dataPoints
-      }]
-    });
-    chart.render();
-  }
-
 }
