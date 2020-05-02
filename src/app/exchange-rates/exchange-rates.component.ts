@@ -48,14 +48,14 @@ export class ExchangeRatesComponent implements OnInit {
   }
 
   private drawChart() {
-    const date = new Date();
     this.apiService.getExchangeRates().subscribe((data) => {
-      for (let i = 0; i < 7; i++) {
-        date.setDate(date.getDate() + i);
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
         this.lineChartLabels.push(date.toLocaleDateString());
       }
       for (const [key, value] of Object.entries(data)) {
-        this.lineChartData.push({data: value.map(x => x.rate), label: key});
+        this.lineChartData.push({data: value.map(x => x.rate).reverse(), label: key});
       }
       this.chartReady = true;
     });

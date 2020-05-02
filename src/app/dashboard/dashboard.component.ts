@@ -66,8 +66,8 @@ export class DashboardComponent implements OnInit {
       this.exchangeForm.get('option').value.to_currency)
       .subscribe((data: ConvertModel) => {
         this.convertModel = data;
-        this.lineChartLabels = data.exchangeRates.map(x => new Date(x.date).toLocaleDateString());
-        this.lineChartData.push({data: data.exchangeRates.map(x => x.rate), label: ''});
+        this.lineChartLabels = data.exchangeRates.map(x => new Date(x.date).toLocaleDateString()).reverse();
+        this.lineChartData.push({data: data.exchangeRates.map(x => x.rate).reverse(), label: ''});
         this.chartReady = true;
       });
   }
