@@ -4,6 +4,8 @@ import {environment} from '../../environments/environment';
 import {ConvertModel} from '../model/convert.model';
 import {map} from 'rxjs/operators';
 import {ExchangeRateModel} from '../model/exchange-rate.model';
+import {ExchangeRatesModel} from '../model/exchange-rates.model';
+import {ChartDataSets} from 'chart.js';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,7 @@ export class ApiService {
 
   convertAmout(amount: number, fromCurrency: string, toCurrency: string) {
     const params = new HttpParams()
-      .set('amount', amount.toString())
+      .set('cents', (amount * 100).toString()) // convert euro in cents
       .set('from_currency', fromCurrency)
       .set('to_currency', toCurrency);
 
@@ -29,6 +31,12 @@ export class ApiService {
   }
 
   getExchangeRates() {
-    return this.httpClient.get(`${environment.apiUrl}/api/exchange_rates.json`);
+    return this.httpClient.get<ExchangeRatesModel>(`${environment.apiUrl}/api/exchange_rates.json`)
+      .pipe(map((data: any) =>
+        new ExchangeRatesModel(
+          data.labels,
+          data.data.map(res => <ChartDataSets> {label: res.label, data: res.data})
+        )
+      ));
   }
 }

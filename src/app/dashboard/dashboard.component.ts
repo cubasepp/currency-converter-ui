@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit {
     this.chartReady = false;
     this.lineChartData = [];
     this.apiService.convertAmout(
-      this.exchangeForm.get('amount').value * 100, // convert euro in cents
+      this.exchangeForm.get('amount').value,
       this.exchangeForm.get('option').value.from_currency,
       this.exchangeForm.get('option').value.to_currency)
       .subscribe((data: ConvertModel) => {
