@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../services/api.service';
 import {ChartDataSets} from 'chart.js';
 import {Color, Label} from 'ng2-charts';
+import {ExchangeRatesModel} from '../model/exchange-rates.model';
 
 @Component({
   selector: 'app-exchange-rates',
@@ -48,15 +49,9 @@ export class ExchangeRatesComponent implements OnInit {
   }
 
   private drawChart() {
-    this.apiService.getExchangeRates().subscribe((data) => {
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        this.lineChartLabels.push(date.toLocaleDateString());
-      }
-      for (const [key, value] of Object.entries(data)) {
-        this.lineChartData.push({data: value.map(x => x.rate).reverse(), label: key});
-      }
+    this.apiService.getExchangeRates().subscribe((response: ExchangeRatesModel) => {
+      this.lineChartLabels = response.labels;
+      this.lineChartData = response.data;
       this.chartReady = true;
     });
 
